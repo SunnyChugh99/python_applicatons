@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ name: mosaic-serviceaccount
+ namespace: vault
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+ name: mosaic-role-tokenreview-binding
+ namespace: vault
+roleRef:
+ apiGroup: rbac.authorization.k8s.io
+ kind: ClusterRole
+ name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+ name: mosaic-serviceaccount
+ namespace: vault
