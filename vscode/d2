@@ -1,0 +1,23 @@
+FROM codercom/code-server:3.11.1
+USER root
+#switch to root user and install jdk11, maven, nginx
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    nginx \
+    openjdk-11-jdk \
+    maven \
+    make \
+    wget \
+  &&  echo "**** cleanup ****"\
+  &&  apt-get remove -y patch \
+  &&  apt-get autoremove \
+  &&  apt-get clean \
+  &&  rm -rf  /tmp/*  /var/lib/apt/lists/*  /var/tmp/*
+
+
+
+RUN code-server --user-data-dir /config/data \
+    --extensions-dir /config/extensions \
+    --install-extension vscjava.vscode-java-pack \
+    && rm -r /config/extensions/redhat.java-*
+

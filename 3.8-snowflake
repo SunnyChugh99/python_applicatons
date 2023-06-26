@@ -1,0 +1,34 @@
+BUILD_PY_38_SNOW_AUTO:
+  stage: build
+  image: "registry.lti-aiq.in:443/mosaic-ai-logistics/mosaic-notebooks-manager/gitlab/docker:stable"
+  services:
+  - docker:dind
+  variables:
+    DOCKERFILE_PATH: "./mosaic-docker-builder/conda/python/nb_templates/"
+    DOCKER_BUILD_NAME: "${CI_REGISTRY_IMAGE}/jupyter/3.8-snowflake"
+    TAG_ERROR: "JUPYTER_38_SNOW_TAG not set"
+    GPU_TAG_ERROR: "JUPYTER_38_SNOW_GPU_TAG"
+    PYTHON_VERSION: "3.8"
+    BASE_TEMPLATE_TAG: "registry.access.redhat.com/ubi9:latest"
+    VANILLA_IMAGE: "yes"
+    SNOWFLAKE_IMAGE: "yes"
+  script:
+  - hwclock --hctosys
+  - echo "Today is $(date)"
+  - apk update
+  - apk add --update --no-cache curl py-pip
+  - python3 ci_build_images.py --which=jupyter_38_snowflake
+  - source build_tags.env
+  - cat build_tags.env
+  - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  - if [ -z "$JUPYTER_38_SNOW_TAG" ]; then echo "$TAG_ERROR" && exit 1; else docker build -t $DOCKER_BUILD_NAME:${JUPYTER_38_SNOW_TAG} --build-arg PYTHON_VERSION=$PYTHON_VERSION --build-arg BASE_TEMPLATE_TAG=$BASE_TEMPLATE_TAG --build-arg VANILLA_IMAGE=$VANILLA_IMAGE --build-arg SNOWFLAKE_IMAGE=$SNOWFLAKE_IMAGE $DOCKERFILE_PATH; fi;
+  - if [ -z "$JUPYTER_38_SNOW_TAG" ]; then echo "$TAG_ERROR" && exit 1; else docker push $DOCKER_BUILD_NAME:${JUPYTER_38_SNOW_TAG}; fi;
+  - if [ -z "$JUPYTER_38_SNOW_GPU_TAG" ]; then echo "$GPU_TAG_ERROR" && exit 1; else docker build -t $DOCKER_BUILD_NAME:${JUPYTER_38_SNOW_GPU_TAG} --build-arg PYTHON_VERSION=$PYTHON_VERSION --build-arg BASE_TEMPLATE_TAG=$BASE_TEMPLATE_TAG --build-arg VANILLA_IMAGE=$VANILLA_IMAGE --build-arg SNOWFLAKE_IMAGE=$SNOWFLAKE_IMAGE $DOCKERFILE_PATH; fi;
+  - if [ -z "$JUPYTER_38_SNOW_GPU_TAG" ]; then echo "$GPU_TAG_ERROR" && exit 1; else docker push $DOCKER_BUILD_NAME:${JUPYTER_38_SNOW_GPU_TAG}; fi;
+  only:
+    refs:
+      - dev
+    changes:
+      - mosaic-docker-builder/conda/python/nb_templates/*
+      - notebooks-api/src/notebooks_api/docker_image/image_information/jupyter_38.py
+      - notebooks-api/src/notebooks_api/docker_image/image_information/jupyterlab_38_image.py

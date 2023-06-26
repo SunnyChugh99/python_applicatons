@@ -72,9 +72,12 @@ results = cur.fetchall()
 with open('insert_queries.sql', 'w') as f:
     # Loop through the results and write insert queries to the file
     for row in results:
+        import uuid
+        id = uuid.uuid4()
+        str(id)
         # Check if row[2] is None or empty
         version = row[2] if row[2] else 'default'
-        f.write(f"INSERT INTO nb_docker_image_tag(id, created_by, tag, updated_by, docker_image_id) VALUES (uuid_generate_v4(), 'system', 'version={version}', 'system', '{row[0]}');\n")
+        f.write(f"INSERT INTO nb_docker_image_tag(id, created_by, tag, updated_by, docker_image_id) VALUES ({id},'system','version={version}', 'system', '{row[0]}');\n")
 
 # Execute the insert queries
 cur.execute(open('insert_queries.sql', 'r').read())
