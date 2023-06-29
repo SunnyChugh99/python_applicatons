@@ -1,6 +1,10 @@
 FROM codercom/code-server:latest
+
 USER root
+RUN apt-get update && apt-get install -y python3-pip
+
 COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
+COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
 
 RUN mkdir -p /notebooks/notebooks
 
@@ -8,8 +12,15 @@ RUN mkdir -p /config/data
 RUN mkdir -p /config/extensions
 
 RUN code-server --user-data-dir /config/data \
-    --extensions-dir /config/extensions \
-    --install-extension /home/coder/snowflake.snowflake-vsc-1.1.1.vsix
+     --extensions-dir /config/extensions \
+     --install-extension /home/coder/snowflake.snowflake-vsc-1.1.1.vsix
+
+RUN code-server --user-data-dir /config/data \
+     --extensions-dir /config/extensions \
+     --install-extension /home/coder/Phu1237.vs-browser-2.0.10.vsix
+
+
+RUN pip install streamlit
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -18,8 +29,8 @@ RUN apt-get update \
     wget \
   &&  echo "**** cleanup ****"\
   &&  apt-get remove -y patch \
-  &&  apt-get autoremove \
-  &&  apt-get clean \
+  &&  apt-get autoremove -y \
+  &&  apt-get clean -y \
   &&  rm -rf  /tmp/*  /var/lib/apt/lists/*  /var/tmp/*
 
 RUN rm /etc/nginx/nginx.conf
@@ -33,5 +44,7 @@ EXPOSE 8080
 WORKDIR /home/mosaic-ai/
 COPY entrypoint.sh entrypoint.sh
 
+
 RUN echo "umask \$NB_UMASK" >> /.bashrc && echo "umask \$NB_UMASK" >> /etc/bash.bashrc && echo "umask \$NB_UMASK" >> /etc/bashrc &&  echo "umask \$NB_UMASK" >> /.shrc
+
 ENTRYPOINT ["bash","entrypoint.sh"]
