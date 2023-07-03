@@ -2,6 +2,10 @@ FROM codercom/code-server:latest
 
 USER root
 RUN apt-get update && apt-get install -y python3-pip
+ENV PATH=/usr/bin:$PATH
+# pip package installation path [read only root file system]
+RUN pip config  set global.target /tmp/pip_packages
+ENV PYTHONPATH "${PYTHONPATH}:/tmp/pip_packages"
 
 COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
 COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
@@ -22,6 +26,9 @@ RUN code-server --user-data-dir /config/data \
 RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
      --install-extension /home/coder/ms-toolsai.jupyter-2023.6.1001821100.vsix
+
+RUN code-server --install-extension /home/coder/ms-toolsai.jupyter-2023.6.1001821100.vsix --force
+
 
 RUN pip install streamlit
 
