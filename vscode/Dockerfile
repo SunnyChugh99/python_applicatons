@@ -64,5 +64,7 @@ RUN chown -R "mosaic-ai":"mosaic-ai" /create_user.sh && chmod 777 /create_user.s
 
 RUN echo "umask \$NB_UMASK" >> /.bashrc && echo "umask \$NB_UMASK" >> /etc/bash.bashrc && echo "umask \$NB_UMASK" >> /etc/bashrc &&  echo "umask \$NB_UMASK" >> /.shrc
 USER mosaic-ai
+python3 -m pip install notebook
+
 
 ENTRYPOINT ["bash","entrypoint.sh"]

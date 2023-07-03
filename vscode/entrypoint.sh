@@ -38,6 +38,7 @@ if [ $status -ne 0 ]; then
 fi
 
 
+python3 -m jupyter notebook --allow-root --ip=0.0.0.0 --port=8888 --no-browser
 
 while sleep 60; do
   ps aux |grep nginx |grep -q -v grep
