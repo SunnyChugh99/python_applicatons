@@ -9,7 +9,7 @@ ENV PYTHONPATH "${PYTHONPATH}:/tmp/pip_packages"
 
 COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
 COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
-COPY ms-toolsai.jupyter-2023.6.1001821100.vsix /home/coder/
+COPY ms-toolsai.jupyter-2023.6.1001801100@win32-ia32.vsix /home/coder/
 RUN mkdir -p /notebooks/notebooks
 
 RUN mkdir -p /config/data
@@ -25,7 +25,7 @@ RUN code-server --user-data-dir /config/data \
 
 RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
-     --install-extension /home/coder/ms-toolsai.jupyter-2023.6.1001821100.vsix
+     --install-extension /home/coder/ms-toolsai.jupyter-2023.6.1001801100@win32-ia32.vsix
 
 RUN code-server --install-extension /home/coder/ms-toolsai.jupyter-2023.6.1001821100.vsix --force
 
