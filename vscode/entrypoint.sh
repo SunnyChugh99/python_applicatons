@@ -37,6 +37,8 @@ if [ $status -ne 0 ]; then
   exit $status
 fi
 
+
+
 while sleep 60; do
   ps aux |grep nginx |grep -q -v grep
   PROCESS_1_STATUS=$?

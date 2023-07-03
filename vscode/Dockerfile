@@ -77,4 +77,5 @@ USER mosaic-ai
 RUN python3 -m pip install notebook
 RUN python3 -m pip install ipykernel
 
+RUN python3 -m ipykernel install --user
 ENTRYPOINT ["bash","entrypoint.sh"]
