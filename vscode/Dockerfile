@@ -2,8 +2,8 @@ FROM codercom/code-server:latest
 
 USER root
 RUN apt-get update && apt-get install -y python3-pip
-ENV PATH=/usr/bin:$PATH
-# pip package installation path [read only root file system]
+ENV PATH=/usr/bin/python3:$PATH
+# pip package installation path [read only root file system] python3
 RUN pip config  set global.target /tmp/pip_packages
 ENV PYTHONPATH "${PYTHONPATH}:/tmp/pip_packages"
 
