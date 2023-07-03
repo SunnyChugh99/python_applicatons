@@ -63,5 +63,6 @@ RUN chown -R "mosaic-ai":"mosaic-ai" entrypoint.sh
 RUN chown -R "mosaic-ai":"mosaic-ai" /create_user.sh && chmod 777 /create_user.sh
 
 RUN echo "umask \$NB_UMASK" >> /.bashrc && echo "umask \$NB_UMASK" >> /etc/bash.bashrc && echo "umask \$NB_UMASK" >> /etc/bashrc &&  echo "umask \$NB_UMASK" >> /.shrc
+USER mosaic-ai
 
 ENTRYPOINT ["bash","entrypoint.sh"]
