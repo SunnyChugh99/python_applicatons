@@ -1,15 +1,20 @@
 FROM codercom/code-server:latest
 
 USER root
+
 RUN apt-get update && apt-get install -y python3-pip
-ENV PATH=/usr/bin/python3:$PATH
-# pip package installation path [read only root file system] python3
-RUN pip config  set global.target /tmp/pip_packages
-ENV PYTHONPATH "${PYTHONPATH}:/tmp/pip_packages"
+
+
+# ENV PATH=/usr/bin/python3:$PATH
+# # pip package installation path [read only root file system] python3
+# RUN pip config  set global.target /tmp/pip_packages
+# ENV PYTHONPATH "${PYTHONPATH}:/tmp/pip_packages"
 
 COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
 COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
-COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
+
+#COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
+
 RUN mkdir -p /notebooks/notebooks
 
 RUN mkdir -p /config/data
@@ -23,11 +28,11 @@ RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
      --install-extension /home/coder/Phu1237.vs-browser-2.0.10.vsix
 
-RUN code-server --user-data-dir /config/data \
-     --extensions-dir /config/extensions \
-     --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
-
-RUN code-server --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix --force
+# RUN code-server --user-data-dir /config/data \
+#      --extensions-dir /config/extensions \
+#      --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
+#
+# RUN code-server --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix --force
 
 
 RUN pip install streamlit
@@ -74,8 +79,7 @@ RUN chown -R "mosaic-ai":"mosaic-ai" /create_user.sh && chmod 777 /create_user.s
 
 RUN echo "umask \$NB_UMASK" >> /.bashrc && echo "umask \$NB_UMASK" >> /etc/bash.bashrc && echo "umask \$NB_UMASK" >> /etc/bashrc &&  echo "umask \$NB_UMASK" >> /.shrc
 USER mosaic-ai
-RUN python3 -m pip install notebook
-RUN python3 -m pip install ipykernel
+# RUN python3 -m pip install notebook
+# RUN python3 -m pip install -U ipykernel
 
-RUN python3 -m ipykernel install --user
 ENTRYPOINT ["bash","entrypoint.sh"]
