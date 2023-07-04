@@ -1,5 +1,4 @@
 FROM codercom/code-server:latest
-#FROM codercom/code-server:4.0.1
 
 USER root
 
@@ -25,9 +24,9 @@ RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
      --install-extension /home/coder/Phu1237.vs-browser-2.0.10.vsix
 
-# RUN code-server --user-data-dir /config/data \
-#      --extensions-dir /config/extensions \
-#      --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
+RUN code-server --user-data-dir /config/data \
+     --extensions-dir /config/extensions \
+     --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
 
 RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
@@ -80,5 +79,6 @@ RUN echo "umask \$NB_UMASK" >> /.bashrc && echo "umask \$NB_UMASK" >> /etc/bash.
 USER mosaic-ai
 RUN python3 -m pip install notebook
 RUN python3 -m pip install -U ipykernel
+COPY jupyter_notebook_config.py /opt/conda/etc/jupyter/
 
 ENTRYPOINT ["bash","entrypoint.sh"]
