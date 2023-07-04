@@ -1,9 +1,12 @@
 #FROM codercom/code-server:latest
-FROM codercom/code-server:4.10.0
+FROM codercom/code-server:4.12.0
+
 USER root
 
-RUN apt-get update && apt-get install -y python3-pip
+RUN sudo apt-get update && sudo apt-get -y install --no-install-recommends python3-venv python3-pip
 
+RUN code-server --install-extension ms-toolsai.jupyter
+RUN code-server --install-extension ms-python.python
 
 # ENV PATH=/usr/bin/python3:$PATH
 # # pip package installation path [read only root file system] python3
