@@ -11,6 +11,7 @@ COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
 
 COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
 
+COPY ms-python.python-2023.11.11811010.vsix /home/coder/
 RUN mkdir -p /notebooks/notebooks
 
 RUN mkdir -p /config/data
