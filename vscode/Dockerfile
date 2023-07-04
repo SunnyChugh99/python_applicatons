@@ -5,24 +5,11 @@ USER root
 
 RUN sudo apt-get update && sudo apt-get -y install --no-install-recommends python3-venv python3-pip
 
-RUN code-server --user-data-dir /config/data \
-     --extensions-dir /config/extensions \
-     --install-extension ms-toolsai.jupyter
-
-RUN code-server --user-data-dir /config/data \
-     --extensions-dir /config/extensions \
-     --install-extension ms-python.python
-
-
-# ENV PATH=/usr/bin/python3:$PATH
-# # pip package installation path [read only root file system] python3
-# RUN pip config  set global.target /tmp/pip_packages
-# ENV PYTHONPATH "${PYTHONPATH}:/tmp/pip_packages"
 
 COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
 COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
 
-#COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
+COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
 
 RUN mkdir -p /notebooks/notebooks
 
@@ -37,11 +24,13 @@ RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
      --install-extension /home/coder/Phu1237.vs-browser-2.0.10.vsix
 
-# RUN code-server --user-data-dir /config/data \
-#      --extensions-dir /config/extensions \
-#      --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
-#
-# RUN code-server --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix --force
+RUN code-server --user-data-dir /config/data \
+     --extensions-dir /config/extensions \
+     --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
+
+RUN code-server --user-data-dir /config/data \
+     --extensions-dir /config/extensions \
+     --install-extension /home/coder/ms-python.python-2023.11.11811010.vsix
 
 
 RUN pip install streamlit
