@@ -5,8 +5,14 @@ USER root
 
 RUN sudo apt-get update && sudo apt-get -y install --no-install-recommends python3-venv python3-pip
 
-RUN code-server --install-extension ms-toolsai.jupyter
-RUN code-server --install-extension ms-python.python
+RUN code-server --user-data-dir /config/data \
+     --extensions-dir /config/extensions \
+     --install-extension ms-toolsai.jupyter
+
+RUN code-server --user-data-dir /config/data \
+     --extensions-dir /config/extensions \
+     --install-extension ms-python.python
+
 
 # ENV PATH=/usr/bin/python3:$PATH
 # # pip package installation path [read only root file system] python3
