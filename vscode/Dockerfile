@@ -1,5 +1,5 @@
 #FROM codercom/code-server:latest
-FROM codercom/code-server:4.12.0
+FROM codercom/code-server:4.0.1
 
 USER root
 
