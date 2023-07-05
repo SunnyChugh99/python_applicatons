@@ -5,12 +5,9 @@ USER root
 RUN sudo apt-get update && sudo apt-get -y install --no-install-recommends python3-venv python3-pip
 
 
-COPY snowflake.snowflake-vsc-0.8.2.vsix /home/coder/
+COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
 COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
 
-# COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
-#
-# COPY ms-python.python-2023.11.11811010.vsix /home/coder/
 RUN mkdir -p /notebooks/notebooks
 
 RUN mkdir -p /config/data
@@ -18,7 +15,7 @@ RUN mkdir -p /config/extensions
 
 RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
-     --install-extension /home/coder/snowflake.snowflake-vsc-0.8.2.vsix
+     --install-extension /home/coder/snowflake.snowflake-vsc-1.1.1.vsix
 
 RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
