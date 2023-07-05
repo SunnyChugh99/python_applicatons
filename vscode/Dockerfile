@@ -8,9 +8,9 @@ RUN sudo apt-get update && sudo apt-get -y install --no-install-recommends pytho
 COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
 COPY Phu1237.vs-browser-2.0.10.vsix /home/coder/
 
-COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
-
-COPY ms-python.python-2023.11.11811010.vsix /home/coder/
+# COPY ms-toolsai.jupyter-2022.7.1002081042.vsix /home/coder/
+#
+# COPY ms-python.python-2023.11.11811010.vsix /home/coder/
 RUN mkdir -p /notebooks/notebooks
 
 RUN mkdir -p /config/data
@@ -24,14 +24,14 @@ RUN code-server --user-data-dir /config/data \
      --extensions-dir /config/extensions \
      --install-extension /home/coder/Phu1237.vs-browser-2.0.10.vsix
 
-RUN code-server --user-data-dir /config/data \
-     --extensions-dir /config/extensions \
-     --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
-
-RUN code-server --user-data-dir /config/data \
-     --extensions-dir /config/extensions \
-     --install-extension /home/coder/ms-python.python-2023.11.11811010.vsix
-
+# RUN code-server --user-data-dir /config/data \
+#      --extensions-dir /config/extensions \
+#      --install-extension /home/coder/ms-toolsai.jupyter-2022.7.1002081042.vsix
+#
+# RUN code-server --user-data-dir /config/data \
+#      --extensions-dir /config/extensions \
+#      --install-extension /home/coder/ms-python.python-2023.11.11811010.vsix
+#
 
 RUN pip install streamlit
 
@@ -77,8 +77,8 @@ RUN chown -R "mosaic-ai":"mosaic-ai" /create_user.sh && chmod 777 /create_user.s
 
 RUN echo "umask \$NB_UMASK" >> /.bashrc && echo "umask \$NB_UMASK" >> /etc/bash.bashrc && echo "umask \$NB_UMASK" >> /etc/bashrc &&  echo "umask \$NB_UMASK" >> /.shrc
 USER mosaic-ai
-RUN python3 -m pip install notebook
-RUN python3 -m pip install -U ipykernel
-COPY jupyter_notebook_config.py /opt/conda/etc/jupyter/
+# RUN python3 -m pip install notebook
+# RUN python3 -m pip install -U ipykernel
+# COPY jupyter_notebook_config.py /opt/conda/etc/jupyter/
 
 ENTRYPOINT ["bash","entrypoint.sh"]
