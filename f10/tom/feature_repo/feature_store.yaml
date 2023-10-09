@@ -1,0 +1,11 @@
+project: tom
+# By default, the registry is a file (but can be turned into a more scalable SQL-backed registry)
+provider: local
+online_store:
+    type: sqlite
+    path: data/online_store.db
+entity_key_serialization_version: 5
+registry:
+    registry_type: sql
+    path: postgresql+psycopg2://test:test@localhost:5432/feast
+    cache_ttl_seconds: 60
