@@ -1,0 +1,16 @@
+FROM registry.lti-aiq.in:443/mosaic-ai-logistics/mosaic-notebooks-manager/rstudio:rs3.44-readonly
+USER root
+RUN conda install -c conda-forge r-rjava --yes
+COPY Rprofile.site /temporary
+RUN cp /temporary/Rprofile.site /usr/local/lib/R/etc/Rprofile.site && cp /temporary/Rprofile.site /usr/local/lib/R/etc/Rprofile.site && cp /temporary/Rprofile.site /opt/miniconda/lib/R/etc/Rprofile.site
+RUN chmod 777 /usr/local/lib/R/etc/Rprofile.site /usr/local/lib/R/etc/Rprofile.site /opt/miniconda/lib/R/etc/Rprofile.site
+RUN conda install -c conda-forge r-xlsx --override-channels
+RUN apt-get update
+RUN sudo apt-get install -y libmagick++-dev
+RUN conda install -c conda-forge imagemagick
+
+RUN echo ".libPaths(c('/opt/miniconda/lib/R/library'))" >> /r-studio/.Rprofile
+RUN R -e "install.packages('magick', repos = 'https://cloud.r-project.org/')"
+RUN R -e "install.packages('summarytools', repos = 'https://cloud.r-project.org/')"
+RUN echo ".libPaths(c('/tmp',.libPaths()))" > /r-studio/.Rprofile
+USER rstudio

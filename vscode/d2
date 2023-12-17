@@ -1,0 +1,13 @@
+FROM codercom/code-server:latest
+USER root
+COPY snowflake.snowflake-vsc-1.1.1.vsix /home/coder/
+
+RUN mkdir -p /notebooks/notebooks
+
+RUN mkdir -p /config/data
+RUN mkdir -p /config/extensions
+
+RUN code-server --user-data-dir /config/data \
+    --extensions-dir /config/extensions \
+    --install-extension /home/coder/snowflake.snowflake-vsc-1.1.1.vsix
+

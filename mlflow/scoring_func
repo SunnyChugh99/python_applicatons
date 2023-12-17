@@ -1,0 +1,16 @@
+def score(model, request):
+    payload = request.json["payload"]
+    data_list = payload
+    data_array = np.asarray(data_list)
+    try:
+        prediction = model.predict(data_array)
+    except:
+        prediction = model.predict(data_array.reshape(1, -1))
+    return prediction.tolist()
+
+
+file = open(file_path, "wb")
+for _chunk in obj_file.stream(32 * 1024):
+    file.write(_chunk)
+file.close()
+return file_path.split('/')[-1]
