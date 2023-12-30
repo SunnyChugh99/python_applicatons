@@ -37,12 +37,30 @@
         .update-form {
             display: none;
         }
+
+        .login-form {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Task Manager</h1>
 
+    <!-- Login Form -->
+    <form id="loginForm" class="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="button" onclick="login()">Login</button>
+    </form>
+
     <form id="taskForm">
+        <!-- Add your token input field here -->
+        <input type="hidden" id="token" name="token">
+
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required>
 
@@ -80,6 +98,48 @@
     </div>
 
     <script>
+
+        // Function to log in and obtain a token
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://127.0.0.1:8000/token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+
+                // Store the token in local storage
+                localStorage.setItem('token', data.token);
+
+                // Set the token input field value
+                document.getElementById('token').value = data.token;
+
+                // Hide the login form after successful login
+                document.getElementById('loginForm').style.display = 'none';
+
+                // Show the task-related forms and headings
+                document.getElementById('taskForm').style.display = 'block';
+                document.getElementById('taskList').style.display = 'block';
+                document.querySelector('h1').style.display = 'block';
+                document.querySelector('h2').style.display = 'block';
+
+                // Fetch and display the task list
+                fetchTaskList();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
         // JavaScript code for interacting with APIs
 
         // Function to create a new task
@@ -152,6 +212,44 @@
             });
         }
 
+       // Function to log in and obtain a token
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://127.0.0.1:8000/token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+
+                // Store the token in local storage
+                localStorage.setItem('token', data.token);
+
+                // Hide the login form after successful login
+                document.getElementById('loginForm').style.display = 'none';
+
+                // Show the task-related forms and headings
+                document.getElementById('taskForm').style.display = 'block';
+                document.getElementById('taskList').style.display = 'block';
+                document.querySelector('h1').style.display = 'block';
+                document.querySelector('h2').style.display = 'block';
+
+                // Fetch and display the task list
+                fetchTaskList();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
 
         // Function to open the update form with task details
 function openUpdateForm(task) {
