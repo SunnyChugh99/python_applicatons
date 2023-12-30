@@ -1,4 +1,5 @@
 <!-- tasksApp/templates/index.html -->
+<<!-- tasksApp/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,26 +39,26 @@
             display: none;
         }
 
-        .login-form {
-            margin-bottom: 20px;
+        .task-form {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>Task Manager</h1>
+    <div id="loginForm">
+        <h1>Login</h1>
+        <form>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-    <!-- Login Form -->
-    <form id="loginForm" class="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+            <button type="button" onclick="login()">Login</button>
+        </form>
+    </div>
 
-        <button type="button" onclick="login()">Login</button>
-    </form>
-
-    <form id="taskForm">
+    <div id="taskForm" class="task-form">
         <!-- Add your token input field here -->
         <input type="hidden" id="token" name="token">
 
@@ -75,12 +76,12 @@
         <input type="hidden" id="selectedTaskId" name="selectedTaskId">
 
         <button type="button" onclick="createTask()">Add Task</button>
-    </form>
+    </div>
 
-    <h2>All Tasks</h2>
-    <ul id="taskList"></ul>
+    <h2 class="task-form">All Tasks</h2>
+    <ul id="taskList" class="task-form"></ul>
 
-    <div id="updateForm" class="update-form">
+    <div id="updateForm" class="update-form task-form">
         <h2>Update Task</h2>
         <label for="updateTitle">Title:</label>
         <input type="text" id="updateTitle" name="updateTitle" required>
@@ -98,48 +99,49 @@
     </div>
 
     <script>
+        // JavaScript code for interacting with APIs
 
         // Function to log in and obtain a token
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+       function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-            fetch('http://127.0.0.1:8000/token/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
+    fetch('http://127.0.0.1:8000/token/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
 
-                // Store the token in local storage
-                localStorage.setItem('token', data.token);
+        // Store the token in local storage
+        localStorage.setItem('token', data.token);
 
-                // Set the token input field value
-                document.getElementById('token').value = data.token;
+        // Hide the login form after successful login
+        document.getElementById('loginForm').style.display = 'none';
 
-                // Hide the login form after successful login
-                document.getElementById('loginForm').style.display = 'none';
+        // Ensure the update form is hidden
+        toggleUpdateFormVisibility(false);
+        document.getElementById('updateForm').style.display = 'none'
+        // Show the task-related forms and headings
+        document.getElementById('taskForm').style.display = 'block';
+        document.getElementById('taskList').style.display = 'block';
+        document.querySelector('h1').style.display = 'block';
+        document.querySelector('h2').style.display = 'block';
 
-                // Show the task-related forms and headings
-                document.getElementById('taskForm').style.display = 'block';
-                document.getElementById('taskList').style.display = 'block';
-                document.querySelector('h1').style.display = 'block';
-                document.querySelector('h2').style.display = 'block';
-
-                // Fetch and display the task list
-                fetchTaskList();
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+        // Fetch and display the task list
+        fetchTaskList();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
         // JavaScript code for interacting with APIs
 
         // Function to create a new task
@@ -175,6 +177,7 @@
             fetch('http://127.0.0.1:8000/tasks/')
             .then(response => response.json())
             .then(data => {
+
                 const taskList = document.getElementById('taskList');
                 taskList.innerHTML = ''; // Clear the existing list
 
@@ -205,6 +208,8 @@
                     listItem.dataset.taskId = task.id;
 
                     taskList.appendChild(listItem);
+                    toggleUpdateFormVisibility(false);
+
                 });
             })
             .catch((error) => {
@@ -212,114 +217,136 @@
             });
         }
 
-       // Function to log in and obtain a token
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+// Function to log in and obtain a token
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-            fetch('http://127.0.0.1:8000/token/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-
-                // Store the token in local storage
-                localStorage.setItem('token', data.token);
-
-                // Hide the login form after successful login
-                document.getElementById('loginForm').style.display = 'none';
-
-                // Show the task-related forms and headings
-                document.getElementById('taskForm').style.display = 'block';
-                document.getElementById('taskList').style.display = 'block';
-                document.querySelector('h1').style.display = 'block';
-                document.querySelector('h2').style.display = 'block';
-
-                // Fetch and display the task list
-                fetchTaskList();
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-
-        // Function to open the update form with task details
-function openUpdateForm(task) {
-    if (!task || !task.id) {
-        console.error('Invalid task object:', task);
-        return; // Skip if the task is invalid
-    }
-
-    console.log('Opening update form for task:', task);
-    const taskId = task.id; // Get task ID directly from the object
-    console.log('Task ID:', taskId);
-    document.getElementById('updateTitle').value = task.title;
-    document.getElementById('updateDescription').value = task.description;
-    document.getElementById('updateStatus').value = task.status;
-
-    // Store the task ID in a variable or input field for later use
-    document.getElementById('selectedTaskId').value = taskId;
-
-    // Show the update form
-    document.getElementById('updateForm').style.display = 'block';
-
-    // Hide the task form
-    document.getElementById('taskForm').style.display = 'none';
-
-    // Hide the task list
-    document.getElementById('taskList').style.display = 'none';
-
-    // Hide the headings
-    document.querySelector('h1').style.display = 'none';
-    document.querySelector('h2').style.display = 'none';
-}
-
-// Function to submit the update form
-function submitUpdate() {
-    const taskId = document.getElementById('selectedTaskId').value;
-
-    const title = document.getElementById('updateTitle').value;
-    const description = document.getElementById('updateDescription').value;
-    const status = document.getElementById('updateStatus').value;
-
-    fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {
-        method: 'PUT',
+    fetch('http://127.0.0.1:8000/token/', {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            title: title,
-            description: description,
-            status: status,
+            username: username,
+            password: password,
         }),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 200) {
+            return response.json();
+        } else {
+            throw new Error('Invalid credentials');
+        }
+    })
     .then(data => {
         console.log('Success:', data);
-        // Close the update form after updating a task
-        document.getElementById('updateForm').style.display = 'none';
-        // Show the task form
-        document.getElementById('taskForm').style.display = 'block';
-        // Show the task list
-        document.getElementById('taskList').style.display = 'block';
-        // Show the headings
-        document.querySelector('h1').style.display = 'block';
-        document.querySelector('h2').style.display = 'block';
-        // Refresh the task list after updating a task
+
+        // Store the token in local storage
+        localStorage.setItem('token', data.token);
+
+        // Set the token input field value
+        document.getElementById('token').value = data.token;
+
+        // Hide the login form after successful login
+        document.getElementById('loginForm').style.display = 'none';
+
+        // Show the task-related forms and headings
+        document.querySelectorAll('.task-form').forEach(element => {
+            element.style.display = 'block';
+        });
+
+        // Fetch and display the task list
         fetchTaskList();
     })
     .catch((error) => {
         console.error('Error:', error);
+
+        // Show error message for invalid credentials
+        alert('Invalid credentials');
     });
 }
+
+         // Function to toggle the visibility of the update form
+    function toggleUpdateFormVisibility(isVisible) {
+        const updateForm = document.getElementById('updateForm');
+        updateForm.style.display = isVisible ? 'block' : 'none';
+    }
+
+    // Function to open the update form with task details
+    function openUpdateForm(task) {
+        if (!task || !task.id) {
+            console.error('Invalid task object:', task);
+            return; // Skip if the task is invalid
+        }
+
+        console.log('Opening update form for task:', task);
+        const taskId = task.id; // Get task ID directly from the object
+        console.log('Task ID:', taskId);
+        document.getElementById('updateTitle').value = task.title;
+        document.getElementById('updateDescription').value = task.description;
+        document.getElementById('updateStatus').value = task.status;
+
+        // Store the task ID in a variable or input field for later use
+        document.getElementById('selectedTaskId').value = taskId;
+
+        // Show the update form
+        toggleUpdateFormVisibility(true);
+
+        // Hide the task form
+        document.getElementById('taskForm').style.display = 'none';
+
+        // Hide the task list
+        document.getElementById('taskList').style.display = 'none';
+
+        // Hide the headings
+        document.querySelector('h1').style.display = 'none';
+        document.querySelector('h2').style.display = 'none';
+    }
+
+    // Function to submit the update form
+    function submitUpdate() {
+        const taskId = document.getElementById('selectedTaskId').value;
+
+        const title = document.getElementById('updateTitle').value;
+        const description = document.getElementById('updateDescription').value;
+        const status = document.getElementById('updateStatus').value;
+
+        fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+                status: status,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // Close the update form after updating a task
+            toggleUpdateFormVisibility(false);
+
+            // Show the task form
+            document.getElementById('taskForm').style.display = 'block';
+
+            // Show the task list
+            document.getElementById('taskList').style.display = 'block';
+
+            // Show the headings
+            document.querySelector('h1').style.display = 'block';
+            document.querySelector('h2').style.display = 'block';
+
+            // Refresh the task list after updating a task
+            fetchTaskList();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
         // Function to delete a task
         function deleteTask(taskId) {
             fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {

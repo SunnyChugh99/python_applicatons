@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'tasksApp',
 ]
+# LOGIN_REDIRECT_URL = '/to_do_list/'  # Update this to your desired URL
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
