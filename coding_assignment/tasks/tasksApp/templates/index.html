@@ -103,45 +103,46 @@
 
         // Function to log in and obtain a token
        function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-    fetch('http://127.0.0.1:8000/token/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
+            fetch('http://127.0.0.1:8000/token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
 
-        // Store the token in local storage
-        localStorage.setItem('token', data.token);
+                // Store the token in local storage
+                localStorage.setItem('token', data.token);
 
-        // Hide the login form after successful login
-        document.getElementById('loginForm').style.display = 'none';
+                // Hide the login form after successful login
+                document.getElementById('loginForm').style.display = 'none';
 
-        // Ensure the update form is hidden
-        toggleUpdateFormVisibility(false);
-        document.getElementById('updateForm').style.display = 'none'
-        // Show the task-related forms and headings
-        document.getElementById('taskForm').style.display = 'block';
-        document.getElementById('taskList').style.display = 'block';
-        document.querySelector('h1').style.display = 'block';
-        document.querySelector('h2').style.display = 'block';
+                // Ensure the update form is hidden
+                toggleUpdateFormVisibility(false);
+                document.getElementById('updateForm').style.display = 'none'
+                // Show the task-related forms and headings
+                document.getElementById('taskForm').style.display = 'block';
+                document.getElementById('taskList').style.display = 'block';
+                document.querySelector('h1').style.display = 'block';
+                document.querySelector('h2').style.display = 'block';
 
-        // Fetch and display the task list
-        fetchTaskList();
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-}
+                // Fetch and display the task list
+                fetchTaskList();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+        
         // JavaScript code for interacting with APIs
 
         // Function to create a new task
