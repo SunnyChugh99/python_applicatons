@@ -170,15 +170,34 @@
         // Initial call to hide the "Add task" button when the page loads
         document.addEventListener('DOMContentLoaded', function () {
             toggleAddTaskButtonDisplay(false);
+
+            // Check for an existing token in local storage
+            const storedToken = localStorage.getItem('token');
+            if (storedToken) {
+                // Set the token input field value
+                document.getElementById('token').value = storedToken;
+
+                // Hide the login form
+                document.getElementById('loginForm').style.display = 'none';
+
+                // Show the task-related forms and headings
+                document.querySelectorAll('.task-form').forEach(element => {
+                    element.style.display = 'block';
+                });
+
+                // Show the "Add task" button
+                toggleAddTaskButtonDisplay(true);
+
+                // Fetch and display the task list
+                fetchTaskList();
+                toggleCreateForm(false);
+            }
         });
 
         // Function to toggle the visibility of the create task form
         function toggleCreateForm(isVisible) {
-            // const createForm = document.getElementById('taskForm');
-            // createForm.style.display = createForm.style.display === 'none' ? 'block' : 'none';
             const createForm = document.getElementById('taskForm');
             createForm.style.display = isVisible ? 'block' : 'none';
-
         }
 
         // Function to create a new task
@@ -187,10 +206,14 @@
             const description = document.getElementById('description').value;
             const status = document.getElementById('status').value;
 
+            // Get the token from the input field
+            const token = document.getElementById('token').value;
+
             fetch('http://127.0.0.1:8000/tasks/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, // Include the token in the request header
                 },
                 body: JSON.stringify({
                     title: title,
@@ -213,7 +236,14 @@
 
         // Function to fetch and display all tasks
         function fetchTaskList() {
-            fetch('http://127.0.0.1:8000/tasks/')
+            // Get the token from the input field
+            const token = document.getElementById('token').value;
+
+            fetch('http://127.0.0.1:8000/tasks/', {
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Include the token in the request header
+                },
+            })
                 .then(response => response.json())
                 .then(data => {
 
@@ -309,10 +339,14 @@
             const description = document.getElementById('updateDescription').value;
             const status = document.getElementById('updateStatus').value;
 
+            // Get the token from the input field
+            const token = document.getElementById('token').value;
+
             fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, // Include the token in the request header
                 },
                 body: JSON.stringify({
                     title: title,
@@ -348,8 +382,14 @@
 
         // Function to delete a task
         function deleteTask(taskId) {
+            // Get the token from the input field
+            const token = document.getElementById('token').value;
+
             fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Include the token in the request header
+                },
             })
             .then(response => {
                 if (!response.ok) {
