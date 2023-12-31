@@ -90,8 +90,7 @@
 
         <button type="button" onclick="createTask()">Submit Task</button>
     </div>
-
-    <h2 class="task-form">All Tasks</h2>
+    <h2 id="allTasksHeading" class="task-form">All Tasks</h2>
     <ul id="taskList" class="task-form"></ul>
 
     <div id="updateForm" class="update-form task-form">
@@ -307,6 +306,11 @@
             updateForm.style.display = isVisible ? 'block' : 'none';
         }
 
+        function toggleUpdateFormVisibility(isVisible) {
+            const updateForm = document.getElementById('updateForm');
+            updateForm.style.display = isVisible ? 'block' : 'none';
+        }
+
         // Function to open the update form with task details
         function openUpdateForm(task) {
             if (!task || !task.id) {
@@ -333,6 +337,7 @@
 
             // Hide the task list
             document.getElementById('taskList').style.display = 'none';
+            document.getElementById('allTasksHeading').style.display = 'none';
 
             // Hide the headings
             document.querySelector('h1').style.display = 'none';
