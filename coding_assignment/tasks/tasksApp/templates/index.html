@@ -104,6 +104,7 @@
 
         <button type="button" onclick="submitUpdate()">Update</button>
     </div>
+    <button type="button" id="logoutButton" onclick="logout()">Logout</button>
 
     <script>
         // Function to toggle the visibility of the "Add task" button
@@ -158,6 +159,7 @@
                 // Fetch and display the task list
                 fetchTaskList();
                 toggleCreateForm(false);
+                toggleLogoutButton(true);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -418,6 +420,65 @@
 
         // Initial fetch to load the task list
         fetchTaskList();
+
+         // Function to show/hide the logout button based on login status
+         function toggleLogoutButton(isLoggedIn) {
+            const logoutButton = document.getElementById('logoutButton');
+            logoutButton.style.display = isLoggedIn ? 'block' : 'none';
+        }
+
+        // Function to log out
+        function logout() {
+            // Clear the token from local storage
+            localStorage.removeItem('token');
+
+            // Hide the task-related forms and headings
+            document.querySelectorAll('.task-form').forEach(element => {
+                element.style.display = 'none';
+            });
+
+            // Show the login form
+            document.getElementById('loginForm').style.display = 'block';
+
+            // Hide the "Add task" button
+            toggleAddTaskButtonDisplay(false);
+
+            // Hide the logout button
+            toggleLogoutButton(false);
+
+            // Clear the task list
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+
+            // Clear the input fields
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Initial call to hide the logout button when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('token');
+            const isLoggedIn = token !== null;
+            
+            // Show/hide the logout button based on login status
+            toggleLogoutButton(isLoggedIn);
+
+            if (isLoggedIn) {
+                // Show the task-related forms and headings
+                document.querySelectorAll('.task-form').forEach(element => {
+                    element.style.display = 'block';
+                });
+
+                // Show the "Add task" button
+                toggleAddTaskButtonDisplay(true);
+
+                // Fetch and display the task list
+                fetchTaskList();
+            } else {
+                // Show the login form
+                document.getElementById('loginForm').style.display = 'block';
+            }
+        });
         
     </script>
 </body>
