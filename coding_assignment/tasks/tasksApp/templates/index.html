@@ -45,6 +45,12 @@
         .task-form {
             display: none;
         }
+        #logoutButton {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -422,7 +428,8 @@
         fetchTaskList();
 
          // Function to show/hide the logout button based on login status
-         function toggleLogoutButton(isLoggedIn) {
+        // Function to show/hide the logout button based on login status
+        function toggleLogoutButton(isLoggedIn) {
             const logoutButton = document.getElementById('logoutButton');
             logoutButton.style.display = isLoggedIn ? 'block' : 'none';
         }
@@ -459,7 +466,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const token = localStorage.getItem('token');
             const isLoggedIn = token !== null;
-            
+
             // Show/hide the logout button based on login status
             toggleLogoutButton(isLoggedIn);
 
