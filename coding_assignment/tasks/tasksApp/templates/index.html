@@ -1,5 +1,3 @@
-<!-- tasksApp/templates/index.html -->
-<<!-- tasksApp/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,10 +16,19 @@
 
         input, textarea, select, button {
             margin-bottom: 10px;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
         }
 
         button {
             cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
         }
 
         .task-item {
@@ -42,6 +49,10 @@
         .task-form {
             display: none;
         }
+
+        h1, h2 {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -59,7 +70,6 @@
     </div>
 
     <div id="taskForm" class="task-form">
-        <!-- Add your token input field here -->
         <input type="hidden" id="token" name="token">
 
         <label for="title">Title:</label>
@@ -99,10 +109,8 @@
     </div>
 
     <script>
-        // JavaScript code for interacting with APIs
-
         // Function to log in and obtain a token
-       function login() {
+        function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
@@ -116,35 +124,42 @@
                     password: password,
                 }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    throw new Error('Invalid credentials');
+                }
+            })
             .then(data => {
                 console.log('Success:', data);
 
                 // Store the token in local storage
                 localStorage.setItem('token', data.token);
 
+                // Set the token input field value
+                document.getElementById('token').value = data.token;
+
                 // Hide the login form after successful login
                 document.getElementById('loginForm').style.display = 'none';
 
-                // Ensure the update form is hidden
-                toggleUpdateFormVisibility(false);
-                document.getElementById('updateForm').style.display = 'none'
                 // Show the task-related forms and headings
-                document.getElementById('taskForm').style.display = 'block';
-                document.getElementById('taskList').style.display = 'block';
-                document.querySelector('h1').style.display = 'block';
-                document.querySelector('h2').style.display = 'block';
+                document.querySelectorAll('.task-form').forEach(element => {
+                    element.style.display = 'block';
+                });
 
                 // Fetch and display the task list
                 fetchTaskList();
             })
             .catch((error) => {
                 console.error('Error:', error);
+
+                // Show error message for invalid credentials
+                alert('Invalid credentials');
             });
         }
-        
-        // JavaScript code for interacting with APIs
 
+        // JavaScript code for interacting with APIs
         // Function to create a new task
         function createTask() {
             const title = document.getElementById('title').value;
@@ -218,135 +233,85 @@
             });
         }
 
-// Function to log in and obtain a token
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    fetch('http://127.0.0.1:8000/token/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        }),
-    })
-    .then(response => {
-        if (response.status === 200) {
-            return response.json();
-        } else {
-            throw new Error('Invalid credentials');
-        }
-    })
-    .then(data => {
-        console.log('Success:', data);
-
-        // Store the token in local storage
-        localStorage.setItem('token', data.token);
-
-        // Set the token input field value
-        document.getElementById('token').value = data.token;
-
-        // Hide the login form after successful login
-        document.getElementById('loginForm').style.display = 'none';
-
-        // Show the task-related forms and headings
-        document.querySelectorAll('.task-form').forEach(element => {
-            element.style.display = 'block';
-        });
-
-        // Fetch and display the task list
-        fetchTaskList();
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-
-        // Show error message for invalid credentials
-        alert('Invalid credentials');
-    });
-}
-
          // Function to toggle the visibility of the update form
-    function toggleUpdateFormVisibility(isVisible) {
-        const updateForm = document.getElementById('updateForm');
-        updateForm.style.display = isVisible ? 'block' : 'none';
-    }
-
-    // Function to open the update form with task details
-    function openUpdateForm(task) {
-        if (!task || !task.id) {
-            console.error('Invalid task object:', task);
-            return; // Skip if the task is invalid
+        function toggleUpdateFormVisibility(isVisible) {
+            const updateForm = document.getElementById('updateForm');
+            updateForm.style.display = isVisible ? 'block' : 'none';
         }
 
-        console.log('Opening update form for task:', task);
-        const taskId = task.id; // Get task ID directly from the object
-        console.log('Task ID:', taskId);
-        document.getElementById('updateTitle').value = task.title;
-        document.getElementById('updateDescription').value = task.description;
-        document.getElementById('updateStatus').value = task.status;
+        // Function to open the update form with task details
+        function openUpdateForm(task) {
+            if (!task || !task.id) {
+                console.error('Invalid task object:', task);
+                return; // Skip if the task is invalid
+            }
 
-        // Store the task ID in a variable or input field for later use
-        document.getElementById('selectedTaskId').value = taskId;
+            console.log('Opening update form for task:', task);
+            const taskId = task.id; // Get task ID directly from the object
+            console.log('Task ID:', taskId);
+            document.getElementById('updateTitle').value = task.title;
+            document.getElementById('updateDescription').value = task.description;
+            document.getElementById('updateStatus').value = task.status;
 
-        // Show the update form
-        toggleUpdateFormVisibility(true);
+            // Store the task ID in a variable or input field for later use
+            document.getElementById('selectedTaskId').value = taskId;
 
-        // Hide the task form
-        document.getElementById('taskForm').style.display = 'none';
+            // Show the update form
+            toggleUpdateFormVisibility(true);
 
-        // Hide the task list
-        document.getElementById('taskList').style.display = 'none';
+            // Hide the task form
+            document.getElementById('taskForm').style.display = 'none';
 
-        // Hide the headings
-        document.querySelector('h1').style.display = 'none';
-        document.querySelector('h2').style.display = 'none';
-    }
+            // Hide the task list
+            document.getElementById('taskList').style.display = 'none';
 
-    // Function to submit the update form
-    function submitUpdate() {
-        const taskId = document.getElementById('selectedTaskId').value;
+            // Hide the headings
+            document.querySelector('h1').style.display = 'none';
+            document.querySelector('h2').style.display = 'none';
+        }
 
-        const title = document.getElementById('updateTitle').value;
-        const description = document.getElementById('updateDescription').value;
-        const status = document.getElementById('updateStatus').value;
+        // Function to submit the update form
+        function submitUpdate() {
+            const taskId = document.getElementById('selectedTaskId').value;
 
-        fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                title: title,
-                description: description,
-                status: status,
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            // Close the update form after updating a task
-            toggleUpdateFormVisibility(false);
+            const title = document.getElementById('updateTitle').value;
+            const description = document.getElementById('updateDescription').value;
+            const status = document.getElementById('updateStatus').value;
 
-            // Show the task form
-            document.getElementById('taskForm').style.display = 'block';
+            fetch(`http://127.0.0.1:8000/tasks/${taskId}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    status: status,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Close the update form after updating a task
+                toggleUpdateFormVisibility(false);
 
-            // Show the task list
-            document.getElementById('taskList').style.display = 'block';
+                // Show the task form
+                document.getElementById('taskForm').style.display = 'block';
 
-            // Show the headings
-            document.querySelector('h1').style.display = 'block';
-            document.querySelector('h2').style.display = 'block';
+                // Show the task list
+                document.getElementById('taskList').style.display = 'block';
 
-            // Refresh the task list after updating a task
-            fetchTaskList();
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
+                // Show the headings
+                document.querySelector('h1').style.display = 'block';
+                document.querySelector('h2').style.display = 'block';
+
+                // Refresh the task list after updating a task
+                fetchTaskList();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
 
         // Function to delete a task
         function deleteTask(taskId) {
