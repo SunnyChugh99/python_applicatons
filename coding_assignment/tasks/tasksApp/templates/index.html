@@ -1,3 +1,4 @@
+<!-- tasksApp/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,21 +18,16 @@
         input, textarea, select, button {
             margin-bottom: 10px;
             display: block;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 8px;
         }
 
         button {
             cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
         }
 
         .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
             padding: 10px;
             border: 1px solid #ccc;
@@ -49,15 +45,13 @@
         .task-form {
             display: none;
         }
-
-        h1, h2 {
-            display: block;
-        }
     </style>
 </head>
 <body>
+    <h1>TASK MANAGER</h1>
+
     <div id="loginForm">
-        <h1>Login</h1>
+        <h2>Login</h2>
         <form>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
@@ -69,7 +63,10 @@
         </form>
     </div>
 
+    <button type="button" id="addTaskButton" style="display: none;" onclick="toggleCreateForm(true)">Add task to your to-do list</button>
+
     <div id="taskForm" class="task-form">
+        <!-- Add your token input field here -->
         <input type="hidden" id="token" name="token">
 
         <label for="title">Title:</label>
@@ -85,7 +82,7 @@
         </select>
         <input type="hidden" id="selectedTaskId" name="selectedTaskId">
 
-        <button type="button" onclick="createTask()">Add Task</button>
+        <button type="button" onclick="createTask()">Submit Task</button>
     </div>
 
     <h2 class="task-form">All Tasks</h2>
@@ -109,6 +106,13 @@
     </div>
 
     <script>
+        // Function to toggle the visibility of the "Add task" button
+        function toggleAddTaskButtonDisplay(isVisible) {
+            // Show the add task button after login
+            const addTaskButton = document.getElementById('addTaskButton');
+            addTaskButton.style.display = isVisible ? 'block' : 'none';
+        }
+
         // Function to log in and obtain a token
         function login() {
             const username = document.getElementById('username').value;
@@ -148,8 +152,12 @@
                     element.style.display = 'block';
                 });
 
+                // Show the "Add task" button after login
+                toggleAddTaskButtonDisplay(true);
+
                 // Fetch and display the task list
                 fetchTaskList();
+                toggleCreateForm(false);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -159,7 +167,20 @@
             });
         }
 
-        // JavaScript code for interacting with APIs
+        // Initial call to hide the "Add task" button when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleAddTaskButtonDisplay(false);
+        });
+
+        // Function to toggle the visibility of the create task form
+        function toggleCreateForm(isVisible) {
+            // const createForm = document.getElementById('taskForm');
+            // createForm.style.display = createForm.style.display === 'none' ? 'block' : 'none';
+            const createForm = document.getElementById('taskForm');
+            createForm.style.display = isVisible ? 'block' : 'none';
+
+        }
+
         // Function to create a new task
         function createTask() {
             const title = document.getElementById('title').value;
@@ -182,6 +203,8 @@
                 console.log('Success:', data);
                 // Refresh the task list after creating a new task
                 fetchTaskList();
+                // Hide the create form after a task has been added
+                toggleCreateForm(false);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -191,49 +214,56 @@
         // Function to fetch and display all tasks
         function fetchTaskList() {
             fetch('http://127.0.0.1:8000/tasks/')
-            .then(response => response.json())
-            .then(data => {
+                .then(response => response.json())
+                .then(data => {
 
-                const taskList = document.getElementById('taskList');
-                taskList.innerHTML = ''; // Clear the existing list
+                    const taskList = document.getElementById('taskList');
+                    taskList.innerHTML = ''; // Clear the existing list
 
-                data.forEach(task => {
-                    if (!task || !task.id) {
-                        console.error('Invalid task object:', task);
-                        return; // Skip invalid tasks
-                    }
+                    data.forEach(task => {
+                        if (!task || !task.id) {
+                            console.error('Invalid task object:', task);
+                            return; // Skip invalid tasks
+                        }
 
-                    const listItem = document.createElement('li');
-                    listItem.className = 'task-item';
-                    listItem.textContent = `${task.title} - ${task.status}`;
+                        const listItem = document.createElement('li');
+                        listItem.className = 'task-item';
 
-                    // Add buttons for updating and deleting tasks
-                    const updateButton = document.createElement('button');
-                    updateButton.textContent = 'Update';
-                    updateButton.addEventListener('click', function() {
-                        openUpdateForm(task);
+                        // Display task name and status in one line
+                        listItem.textContent = `${task.title} - ${task.status}`;
+
+                        // Add buttons for updating and deleting tasks
+                        const buttonsContainer = document.createElement('div');
+                        buttonsContainer.className = 'task-buttons';
+
+                        const updateButton = document.createElement('button');
+                        updateButton.textContent = 'Update';
+                        updateButton.addEventListener('click', function () {
+                            openUpdateForm(task);
+                        });
+                        buttonsContainer.appendChild(updateButton);
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.onclick = () => deleteTask(task.id);
+                        buttonsContainer.appendChild(deleteButton);
+
+                        listItem.appendChild(buttonsContainer);
+
+                        // Store the task ID in a data attribute
+                        listItem.dataset.taskId = task.id;
+
+                        taskList.appendChild(listItem);
+                        toggleUpdateFormVisibility(false);
+                        toggleCreateForm(false);
                     });
-                    listItem.appendChild(updateButton);
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.onclick = () => deleteTask(task.id);
-                    listItem.appendChild(deleteButton);
-
-                    // Store the task ID in a data attribute
-                    listItem.dataset.taskId = task.id;
-
-                    taskList.appendChild(listItem);
-                    toggleUpdateFormVisibility(false);
-
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
                 });
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
         }
 
-         // Function to toggle the visibility of the update form
+        // Function to toggle the visibility of the update form
         function toggleUpdateFormVisibility(isVisible) {
             const updateForm = document.getElementById('updateForm');
             updateForm.style.display = isVisible ? 'block' : 'none';
@@ -246,6 +276,7 @@
                 return; // Skip if the task is invalid
             }
 
+            toggleAddTaskButtonDisplay(false);
             console.log('Opening update form for task:', task);
             const taskId = task.id; // Get task ID directly from the object
             console.log('Task ID:', taskId);
@@ -307,6 +338,8 @@
 
                 // Refresh the task list after updating a task
                 fetchTaskList();
+                toggleAddTaskButtonDisplay(true);
+
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -343,9 +376,9 @@
             });
         }
 
-
         // Initial fetch to load the task list
         fetchTaskList();
+        
     </script>
 </body>
 </html>
